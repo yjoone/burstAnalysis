@@ -3,6 +3,8 @@ function [burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(data,p
 % Issues with detecting repeating line noise needs to be worked out. 120417
 % JK
 
+% burst_i and burstStruct indexes are in 10ms bins
+
 if nargin < 2
     preBurstTimeThresh = 1000; %ms %%%CHANGE%%%
     plotOF = 'off'; 
