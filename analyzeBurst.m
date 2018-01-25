@@ -1,8 +1,12 @@
-function burstStruct = analyzeBurst(burstStruct)
+function burstStruct = analyzeBurst(burstStruct,plotTF)
 
 % this function takes in data from TDT synapse output and the burst_i from
 % detectBurst.m to measure burst freq, duration, spike freq within a burst,
 % and interburstinterval.
+
+if nargin < 2
+    plotTF = 'off';
+end
 
 warning('off','stats:mle:EvalLimit')
 
@@ -36,13 +40,13 @@ for i = 1:length(bursts)
     b = bursts{i};
     burstData = burstStruct.bursts{i};
     burstLen = length(burstData);
-    burst_i = round(burstStruct.burst_i(i)/100); % because burst_i is in 10ms bins
+    burst_ii = round(burstStruct.burst_i(i)/100); % because burst_i is in 10ms bins
     try
-        channel = ch(burst_i:burst_i+burstLen-1);
-        t_burst = t(burst_i:burst_i+burstLen-1);
+        channel = ch(burst_ii:burst_ii+burstLen-1);
+        t_burst = t(burst_ii:burst_ii+burstLen-1);
     catch
-        channel = ch(burst_i:end);
-        t_burst = t(burst_i:end);
+        channel = ch(burst_ii:end);
+        t_burst = t(burst_ii:end);
     end
     
     try
@@ -55,43 +59,51 @@ for i = 1:length(bursts)
     pdfFit(i,1:3) = phat;
     y = pdf('burr',x,phat(1),phat(2),phat(3));
     % calculate burst duration. half on/off period
-    dur(i,1) = sum(y > (max(y)/2)); 
-
+    dur(i,1) = sum(y > (max(y)/2));
+    
     if ~isnan(phat(1))
-        % plot each bursts as histogram and fitted pdf
-        fh = figure('visible','off');
-        hist(b,50); 
-        counts = hist(b,50);
-        scale = max(counts)/max(y);
-        hold on;
-        plot(x,y*scale,'r')
-        title(['Burst id ' num2str(i) ' Histogram, dur = ' num2str(dur(i,1)) ', scale = ' num2str(scale)])
-        xlabel('time (ms)')
-        
-        % inner plot
-        ah = axes();
-        set(ah,'position',[.8 .8 .1 .1]);
-        for cha = 1:max(channel)
-            ind = find(channel == cha);
-            ts = burstData(ind);
-            plot(ts, cha*ones(size(ts)),'k.');
-            max_ts = max(max(ts),max_t);
-            if ~isempty(max_ts)
-                axis([0, max_ts, 0, max_ch+1]);
-            end
+        if strcmp(plotTF,'on')
+            % plot each bursts as histogram and fitted pdf
+            fh = figure('visible','off');
+            hist(b,50);
+            counts = hist(b,50);
+            scale = max(counts)/max(y);
             hold on;
-            box{cha,1} = ts;
+            plot(x,y*scale,'r')
+            title(['Burst id ' num2str(i) ' Histogram, dur = ' num2str(dur(i,1)) ', scale = ' num2str(scale)])
+            xlabel('time (ms)')
+            
+            % inner plot
+            ah = axes();
+            set(ah,'position',[.8 .8 .1 .1]);
+            for cha = 1:max(channel)
+                ind = find(channel == cha);
+                ts = burstData(ind);
+                plot(ts, cha*ones(size(ts)),'k.');
+                max_ts = max(max(ts),max_t);
+                if ~isempty(max_ts)
+                    axis([0, max_ts, 0, max_ch+1]);
+                end
+                hold on;
+                box{cha,1} = ts;
+            end
+            set(gca,'Ydir','reverse')
+            set(gca,'ylim',[0 max_ch]);
+            set(gca,'xlim',[0 1]);
+            
+            fPath = burstStruct.data.info.blockname;
+            fullPath = ['E:/MEA_Analysis/' fPath];
+            try
+                mkdir(fullPath)
+                savefig(fh,['burstHist_' num2str(i) '.fig']);
+                print(fh,['burstHist_' num2str(i) '.png'],'-dpng');
+                clear fh
+            catch
+                display('Please try valid address')
+                keyboard
+            end
+           
         end
-        set(gca,'Ydir','reverse')
-        set(gca,'ylim',[0 max_ch]);
-        set(gca,'xlim',[0 1]);
-        
-        if i == 56
-            keyboard
-        end
-        savefig(fh,['burstHist_' num2str(i) '.fig']);
-        print(fh,['burstHist_' num2str(i) '.png'],'-dpng');
-        clear fh
     end
 end
 

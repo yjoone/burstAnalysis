@@ -21,7 +21,7 @@ preBurstTimeThresh = 1000; %ms;
 dataStruct = preProcessData(dataStruct);
 
 % detect burst
-[burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(data,preBurstTimeThresh,'on');
+[burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(dataStruct,preBurstTimeThresh,'on');
 
 % analyze burst
 burstStruct = analyzeBurst(burstStruct);

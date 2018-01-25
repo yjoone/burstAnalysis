@@ -35,7 +35,8 @@ N = histcounts(tms,binEdges);
 
 %%%%%%%%%% HARD CODED %%%%%%%%%%%%%
 % Set the burst detection threshold: 100x overall firing rate
-burstThresh = mean(N)*100; % this should be only pretreatment firing rate. %%%CHANGE%%%
+% burstThresh = mean(N)*100; % this should be only pretreatment firing rate. %%%CHANGE%%%
+burstThresh = 5;
 
 % detect candidate bursts
 candBurst_i = find(N>burstThresh);

@@ -22,7 +22,7 @@ function varargout = GuiCode(varargin)
 
 % Edit the above text to modify the response to help GuiCode
 
-% Last Modified by GUIDE v2.5 11-Jan-2018 12:29:26
+% Last Modified by GUIDE v2.5 25-Jan-2018 10:25:25
 
 % Version 1.3 update: add in axes handle
 
@@ -57,9 +57,21 @@ function GuiCode_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for GuiCode
 handles.output = hObject;
 
-% store the spike data
-data = varargin{1};
+% unload data based on different input
+if isfield(varargin{1},'data')
+    burstStruct = varargin{1};
+    data = burstStruct.data;
+    handles.output.UserData.burstInfo = 1;
+else
+    data = varargin{1};
+    handles.output.UserData.burstInfo = 0;
+end
+
+% % old way of importing the data
+% % store the spike data
+% data = varargin{1};
 % data.rasterAh = varargin{2};
+
 data.maxCh = max(data.snips.eNe1.chan);
 % set(handles.output, 'UserData', data);
 handles.output.UserData.data = data;
@@ -125,6 +137,23 @@ set(gca,'Ydir','reverse')
 xlabel('time, s')
 set(gca,'ylim',[0 66])
 hold off
+
+handles.output.UserData.rasterxlim = get(gca,'xlim');
+
+
+% plot the burst lcoations on the raster plot if burstStruct was the input
+if handles.output.UserData.burstInfo 
+    hold on
+    burst_i = burstStruct.burst_i;
+    
+    % the burst_i is in 10ms bins so scale it to 1s time scale
+    burst_i = round(burst_i/100);
+    
+    burst_i_len = length(burst_i);
+    plot(burst_i,ones(1,burst_i_len),'r.')
+    hold off
+end
+
 
 % denoise the data during initialization so that it can be readily used
 % later on.
@@ -515,4 +544,15 @@ dataStruct.denoise = 0;
 fileName_c = inputdlg('What is the file name?');
 fileName = [fileName_c{1} '.mat'];
 save(fileName,'dataStruct')
+
+
+% --- Executes on button press in pushbutton7.
+function pushbutton7_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton7 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% when clicked puts the raster plot into its original size
+set(handles.axes2,'xlim',handles.output.UserData.rasterxlim)
 
