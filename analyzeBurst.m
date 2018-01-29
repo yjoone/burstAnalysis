@@ -40,7 +40,15 @@ for i = 1:length(bursts)
     b = bursts{i};
     burstData = burstStruct.bursts{i};
     burstLen = length(burstData);
-    burst_ii = round(burstStruct.burst_i(i)/100); % because burst_i is in 10ms bins
+    
+    % special case when burst_i takes place within the first half second
+    % (rounding it will make the subscript 0)
+    if burstStruct.burst_i(i) < 50
+        burst_ii = ceil(burstStruct.burst_i(i)/100);
+    else
+        burst_ii = round(burstStruct.burst_i(i)/100); % because burst_i is in 10ms bins
+    end
+    
     try
         channel = ch(burst_ii:burst_ii+burstLen-1);
         t_burst = t(burst_ii:burst_ii+burstLen-1);

@@ -26,13 +26,15 @@ dataStruct = preProcessData(dataStruct);
 % analyze burst
 burstStruct = analyzeBurst(burstStruct);
 
+
+
 % save data
 fPath = burstStruct.data.info.blockname;
 fullPath = ['E:/MEA_Analysis/' fPath];
 try
     mkdir(fullPath)
     ffPath = [fullPath '/BurstStruct.mat'];
-    save(ffPath,'burstStruct_f');
+    save(ffPath,'burstStruct');
 catch
     display('Please try valid address')
 end

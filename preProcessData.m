@@ -34,6 +34,11 @@ for i = 1:len_sc
     sc_i = sc_i | sc_i_temp;
 end
 
+% take out the line noise
+noise_t = lineNoiseDetection(dataStruct);
+burstStruct.lineDenoise = 1;
+burstStruct.lineNoise_t = noise_t;
+
 % combine channels and sortcodes to be removed
 remove_i = sc_i | ch_i;
 

@@ -5,10 +5,10 @@ function noise_t = lineNoiseDetection(data,tlim,nspikelim)
 if nargin < 2
     tlim = 1e-3;
     % nspikelim = 3;
-    nspikelim = 15;
+    nspikelim = 7;
 elseif nargin < 3
     % nspikelim = 3;
-    nspikelim = 15;
+    nspikelim = 7;
 end
 
 % unload time data for spikes
@@ -27,5 +27,11 @@ Mt = M*(nspikelim-1);
 
 noise_i = find(Mt < tlim);
 
+% special case for when noise_i contains index 1
+if sum(noise_i == 1)
+    noise_i = noise_i(2:end);
+end
+
 noise_t = ts(noise_i-1);
+
 
