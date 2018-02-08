@@ -4,8 +4,9 @@ function burstStruct = MEAMain(dataStruct)
 % dataStruct from GUI
 
 %%%%%%% HARD CODES %%%%%%%%
-preBurstTimeThresh = 1000; %ms;
-
+postBurstTimeThresh = 300; %ms;
+preBurstPeriod = 250; %ms;
+minBurstActivity = 10; %spikes per burst
 % %% get data from TDT
 % 
 % SNIP_STORE = 'eNe1';
@@ -21,10 +22,11 @@ preBurstTimeThresh = 1000; %ms;
 dataStruct = preProcessData(dataStruct);
 
 % detect burst
-[burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(dataStruct,preBurstTimeThresh,'on');
+% [burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(dataStruct,postBurstTimeThresh,'on');
+[burstStruct] = detectBurst(dataStruct,postBurstTimeThresh,preBurstPeriod,'on');
 
 % analyze burst
-burstStruct = analyzeBurst(burstStruct);
+burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
 
 
 

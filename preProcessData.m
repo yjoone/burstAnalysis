@@ -15,10 +15,11 @@ sc = dataStruct.sc_selected;
 chan = dataStruct.snips.eNe1.chan;
 sortcode = dataStruct.snips.eNe1.sortcode;
 ts = dataStruct.snips.eNe1.ts;
+data_Len = length(ts);
 
 % identify which channels to remove 
 len_ch = length(ch);
-ch_i = logical(zeros(length(chan),1));
+ch_i = logical(zeros(data_Len,1));
 
 for i = 1:len_ch
     ch_i_temp = chan == ch(i);
@@ -27,7 +28,7 @@ end
 
 % identify which sortcode to remove
 len_sc = length(sc);
-sc_i = logical(zeros(length(sortcode),1));
+sc_i = false(data_Len,1);
 
 for i = 1:len_sc
     sc_i_temp = sortcode == sc(i);
@@ -36,11 +37,16 @@ end
 
 % take out the line noise
 noise_t = lineNoiseDetection(dataStruct);
-burstStruct.lineDenoise = 1;
-burstStruct.lineNoise_t = noise_t;
+dataStruct.lineNoise_t = noise_t;
+noise_i = false(length(ts),1);
+
+for n_i = 1:length(noise_t)
+    noise_i_temp = noise_t(n_i) == ts;
+    noise_i = noise_i | noise_i_temp;
+end
 
 % combine channels and sortcodes to be removed
-remove_i = sc_i | ch_i;
+remove_i = sc_i | ch_i | noise_i;
 
 dataStruct.snips.eNe1.chan = chan(~remove_i);
 dataStruct.snips.eNe1.sortcode = sortcode(~remove_i);

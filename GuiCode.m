@@ -144,13 +144,23 @@ handles.output.UserData.rasterxlim = get(gca,'xlim');
 % plot the burst lcoations on the raster plot if burstStruct was the input
 if handles.output.UserData.burstInfo 
     hold on
-    burst_i = burstStruct.burst_i;
+    burst_i = burstStruct.burst_ind(:,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
-    burst_i = round(burst_i/100);
+    burst_i = (burst_i/100);
     
     burst_i_len = length(burst_i);
-    plot(burst_i,ones(1,burst_i_len),'r.')
+    plot(burst_i,ones(1,burst_i_len),'r*','markersize',5)
+    
+    
+    
+    % plot the potential bursts but identified as noise
+    noise = burstStruct.noise;
+    burst_i_dn = burst_i(logical(noise));
+%     burst_i_dn = (burstStruct.burst_i_dn/100);
+    burst_i_dn_len = length(burst_i_dn);
+    plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
+    
     hold off
 end
 
