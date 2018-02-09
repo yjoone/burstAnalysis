@@ -46,7 +46,7 @@ for i = 1:nBursts
 end
 
 % calculate burst frequency
-burstFreq_Hz = sum(noise==0)/max_t;
+burstFreq_Hz = sum(noise==0)/range(data.snips.eNe1.ts);
 
 % calculate IBI
 % IBI = mean(diff(burst_i_dn))/100; % divide by 100 because burst_i is in 10ms bins.
