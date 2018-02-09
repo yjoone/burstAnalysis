@@ -27,6 +27,7 @@ max_ch = max(burstStruct.data.snips.eNe1.chan);
 max_t = max(data.snips.eNe1.ts);
 
 nBursts = length(bursts);
+duration = zeros(nBursts,1);
 
 for i = 1:nBursts
     burst_ind_temp = burst_ind(i,:);
@@ -57,11 +58,19 @@ IBI = diff(burst_ind(~noise,1))/(1000/burst_ind_binSize);
 % burstStruct.pdfFit = pdfFit;
 burstStruct.noise = noise;
 % burstStruct.bursts = bursts{~noise}; % not simple to get rid of cell indexes. This contains noise bursts 
-burstStruct.duration_ms = duration;
+burstStruct.duration_s = duration;
 % burstStruct.burst_i_dn = burst_i(~noise);
 burstStruct.burstFreq_Hz = burstFreq_Hz;
 burstStruct.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz;
 burstStruct.IBI = IBI;
+
+% load in all the finalized analysis data
+burstStruct.analysisData.duration_s = duration(find(noise==0));
+burstStruct.analysisData.burst_ind = burst_ind(find(noise == 0),:);
+burstStruct.analysisData.burstFreq_Hz = burstFreq_Hz;
+burstStruct.analysisData.IBI = IBI;
+burstStruct.analysisData.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz(find(noise==0));
+
 
 
 
