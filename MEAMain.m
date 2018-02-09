@@ -1,12 +1,13 @@
 function burstStruct = MEAMain(dataStruct)
 
 % This is the main function to run MEA analysis. Input is the saved
-% dataStruct from GUI
+% dataStruct from GUI. 
 
 %%%%%%% HARD CODES %%%%%%%%
 postBurstTimeThresh = 300; %ms;
 preBurstPeriod = 250; %ms;
 minBurstActivity = 10; %spikes per burst
+
 % %% get data from TDT
 % 
 % SNIP_STORE = 'eNe1';
