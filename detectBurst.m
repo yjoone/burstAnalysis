@@ -12,6 +12,8 @@ end
 
 %%% HARD CODE %%%
 binSize = 10; %ms
+% Set the burst detection threshold: 100x overall firing rate
+burstThresh = .5;
 %%% END HARD CODE %%%
 
 % % import excel or csv file
@@ -29,18 +31,17 @@ preBurstPeriod_s = preBurstPeriod/1000;
 binEdges = 0:binSize:round(max(tms))+binSize;
 % tmsBin = discretize(tms,binEdges);
 N = histcounts(tms,binEdges);
+Nm = movmean(N,10); % get moving average over 10 consecutive bins to detect missing bursts
 
-% if you want to plot the 10ms bin data 
-% figure; plot(N);
+% if exist('burstThresh')
+%     display('Are you sure you want to overwrite the burst Threshold?')
+%     burstThresh = mean(N)*100; % this should be only pretreatment firing rate. %%%CHANGE%%%
+% end
 
-
-%%%%%%%%%% HARD CODED %%%%%%%%%%%%%
-% Set the burst detection threshold: 100x overall firing rate
-% burstThresh = mean(N)*100; % this should be only pretreatment firing rate. %%%CHANGE%%%
-burstThresh = 3.9;
 
 % detect candidate bursts
-candBurst_i = find(N>burstThresh);
+candBurst_i = find(Nm>=burstThresh);
+% candBurst_i = find(N>=burstThresh);
 candBurst_i_orig = candBurst_i;
 
 % for each candidate burst index, see how long it will take to get 200ms of
@@ -87,7 +88,7 @@ end
 
 burstStruct.bursts = bursts;
 burstStruct.burst_ind = burst_ind;
-burstStruct.burst_ind_binSize = 10; %ms
+burstStruct.burst_ind_binSize = binSize; %ms
 burstStruct.candBurst_i = candBurst_i_orig;
 burstStruct.burstThresh = burstThresh;
 burstStruct.data = data; %preprocessed data
