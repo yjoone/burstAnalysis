@@ -4,6 +4,8 @@ function [dataStruct_1,dataStruct_2] =splitRecordingData(dataStruct,timePeriods)
 % dataset into chunks specified in time periods. The timePeriods input
 % should be a n by 2 array of starting time and end time of each period
 
+% example: [dataStruct_1,dataStruct_2] =splitRecordingData(dataStruct,[0 12*3600; 12*3600 24*2600])
+
 dataStruct_1 = dataStruct;
 dataStruct_2 = dataStruct;
 
@@ -18,6 +20,6 @@ dataStruct_1.snips.eNe1.ts = ts(ind_1);
 dataStruct_1.snips.eNe1.chan = chan(ind_1);
 dataStruct_1.snips.eNe1.sortcode = sortcode(ind_1);
 
-dataStruct_2.snips.eNe1.ts = ts(ind_2);
+dataStruct_2.snips.eNe1.ts = (ts(ind_2)-timePeriods(2,1)); % change the start time based on the timePeriods
 dataStruct_2.snips.eNe1.chan = chan(ind_2);
 dataStruct_2.snips.eNe1.sortcode = sortcode(ind_2);
