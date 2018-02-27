@@ -71,6 +71,11 @@ burstStruct.analysisData.burstFreq_Hz = burstFreq_Hz;
 burstStruct.analysisData.IBI = IBI;
 burstStruct.analysisData.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz(find(noise==0));
 
+% calculate the average and add to the burstStruct
+burstStruct.analysisData.mean_duration_s = mean(burstStruct.analysisData.duration_s);
+burstStruct.analysisData.mean_burstFreq_Hz = mean(burstStruct.analysisData.burstFreq_Hz);
+burstStruct.analysisData.mean_IBI = mean(burstStruct.analysisData.IBI);
+burstStruct.analysisData.mean_withinBurstSpikeRate_Hz = mean(burstStruct.analysisData.withinBurstSpikeRate_Hz);
 
 
 
