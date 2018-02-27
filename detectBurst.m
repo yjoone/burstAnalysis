@@ -54,7 +54,11 @@ for i = 1:candBurst_len
         N_sum = 1;
         N_sum_ind = candBurst_i(i);
         while N_sum > 0
-            N_sum = sum(N((N_sum_ind+1):(N_sum_ind+postBurstTimeThresh_bin)));
+            try
+                N_sum = sum(N((N_sum_ind+1):(N_sum_ind+postBurstTimeThresh_bin)));
+            catch
+                N_sum = sum(N((N_sum_ind+1):end));
+            end
             N_sum_ind = N_sum_ind + 1;
         end
         bursts_sf(i,1:2) = [candBurst_i(i) N_sum_ind];
