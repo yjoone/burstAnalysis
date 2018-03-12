@@ -30,7 +30,8 @@ dataStruct = preProcessData(dataStruct);
 % analyze burst
 burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
 
-
+% get burst channels
+burstStruct = getBurstChannels(burstStruct);
 
 % save data
 fPath = burstStruct.data.info.blockname;
