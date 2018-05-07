@@ -46,7 +46,7 @@ channelWithinBurstSpikeRate = chanSpikes_sum/burstDuration;
 
 % store 
 burstStruct.chan_spikes = chan_spikes;
-burstStruct.channelWithinBurstSpikeRate = channelWithinBurstSpikeRate;
+burstStruct.channelWithinBurstSpikeRate_Hz = channelWithinBurstSpikeRate;
 
 end
 % calculate total duration of burst
