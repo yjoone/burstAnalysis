@@ -51,9 +51,7 @@ burstStruct.chan_spikes = chan_spikes;
 % burstStruct.channelWithinBurstSpikeRate_Hz = channelWithinBurstSpikeRate;
 burstStruct.channelWithinBurstSpikeRate_Hz = chan_spikes./dur';
 
-burstStruct.analysisData.chan_spikes = chan_spikes(:,~noise);
-burstStruct.analysisData.channelWithinBurstSpikeRate_Hz = burstStruct.channelWithinBurstSpikeRate_Hz(:,~noise);
-
+burs
 
 end
 % calculate total duration of burst

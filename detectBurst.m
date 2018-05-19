@@ -21,6 +21,8 @@ burstThresh = .5;
 
 % unload data 
 ts = data.snips.eNe1.ts;
+ch = data.snips.eNe1.chan;
+sc = data.snips.eNe1.sortcode;
 tms = ts*1000;
 
 % scale the threshold to binsize
@@ -83,6 +85,7 @@ for b = 1:burst_num
     burst_ts_i = find(ts > (burst_ind_bin(1,1) - preBurstPeriod_s/1000) ...
         & ts < burst_ind_bin(1,2));
     bursts{b,1} = ts(burst_ts_i);
+    burstsChans{b,1} = ch(burst_ts_i);
 end
 
 
@@ -91,6 +94,7 @@ end
 
 
 burstStruct.bursts = bursts;
+burstStruct.burstChans = burstsChans;
 burstStruct.burst_ind = burst_ind;
 burstStruct.burst_ind_binSize = binSize; %ms
 burstStruct.candBurst_i = candBurst_i_orig;

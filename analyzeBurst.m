@@ -39,7 +39,8 @@ for i = 1:nBursts
         duration(i,1) = (diff(burst_ind_temp))/(1000/burst_ind_binSize);
         
         % calculate spike frequency within a burst
-        withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
+        % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
+        withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
         
         noise(i,1) = 0;
     end
