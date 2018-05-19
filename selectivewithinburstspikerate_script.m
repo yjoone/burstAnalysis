@@ -1,8 +1,8 @@
 % script to recompute getBurstChannels (part of MEAMain), and compute the 
 % selective within burst spike rate
 
-chanExclude = [5,7,8,10];
-% chanExclude = [];
+% chanExclude = [5,7,8,10];
+chanExclude = [];
 
 % have burstStruct in the workspace
 

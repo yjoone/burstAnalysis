@@ -20,4 +20,4 @@ mean_selectiveWithinBurstSpikeRate_Hz = mean(avg_channelWithinBurstSpikeRate_Hz(
 % load it to the burstStruct
 burstStruct.analysisData.selectiveChan.excludedChan = chanExclude;
 burstStruct.analysisData.selectiveChan.mean_selectiveWithinBurstSpikeRate_Hz = ...
-    mean_selectiveWithinBurstSpikeRate_Hz;
+    sum(mean_selectiveWithinBurstSpikeRate_Hz);
