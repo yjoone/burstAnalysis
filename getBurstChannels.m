@@ -53,6 +53,7 @@ burstStruct.channelWithinBurstSpikeRate_Hz = chan_spikes./dur';
 
 burstStruct.analysisData.chan_spikes = chan_spikes(:,~noise);
 burstStruct.analysisData.channelWithinBurstSpikeRate_Hz = burstStruct.channelWithinBurstSpikeRate_Hz(:,~noise);
+burstStruct.analysisData.mean_channelWithinBurstSpikeRate_Hz = mean(burstStruct.analysisData.channelWithinBurstSpikeRate_Hz,2);
 
 
 end

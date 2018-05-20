@@ -1,8 +1,8 @@
 % script to recompute getBurstChannels (part of MEAMain), and compute the 
 % selective within burst spike rate
 
-% chanExclude = [5,7,8,10];
-chanExclude = [];
+chanExclude = [5,7,8,10];
+% chanExclude = [];
 
 % have burstStruct in the workspace
 
@@ -15,4 +15,4 @@ end
 burstStruct = MEAMain(burstStruct.data);
 
 % compute selective within burst spike rate
-[burstStruct,mean_selectiveWithinBurstSpikeRate_Hz] = computeSelectiveWithinBurstSpikeRate(burstStruct,chanExclude);
+[burstStruct,~] = computeSelectiveWithinBurstSpikeRate(burstStruct,chanExclude);
