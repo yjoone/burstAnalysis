@@ -14,6 +14,7 @@ end
 binSize = 10; %ms
 % Set the burst detection threshold: 100x overall firing rate
 burstThresh = .5;
+burstEndThresh = 3;
 %%% END HARD CODE %%%
 
 % % import excel or csv file
@@ -55,7 +56,8 @@ for i = 1:candBurst_len
     if ~overlap
         N_sum = 1;
         N_sum_ind = candBurst_i(i);
-        while N_sum > 0
+        % while N_sum > 0
+        while N_sum > burstEndThresh
             try
                 N_sum = sum(N((N_sum_ind+1):(N_sum_ind+postBurstTimeThresh_bin)));
             catch
