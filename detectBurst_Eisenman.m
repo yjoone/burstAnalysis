@@ -1,4 +1,4 @@
-function [burstStruct] = detectBurst(data,postBurstTimeThresh,preBurstPeriod,plotOF)
+function [burstStruct] = detectBurst_Eisenman(data,postBurstTimeThresh,preBurstPeriod,plotOF)
 
 % Issues with detecting repeating line noise needs to be worked out. 120417
 % JK
@@ -46,6 +46,24 @@ Nm = movmean(N,10); % get moving average over 10 consecutive bins to detect miss
 candBurst_i = find(Nm>=burstThresh);
 % candBurst_i = find(N>=burstThresh);
 candBurst_i_orig = candBurst_i;
+
+% Eisenman method 2015
+[C,ia,ic] = unique(ch);
+candBurst_i = [];
+
+for k = 1:max(ch)
+    ch_i = ch == k;
+    chts = ts(ch_i);
+    chts_d = diff(chts);
+    % 2 was used for 3 consecutive spikes
+    chts_d_ma = movmean(chts_d,2)*2;
+    bin_i = find(chts_d_ma < 10); % 10 ms size bin default 
+    
+    candBurst_i = [candBurst_i; bin_i];
+end
+    
+% order the index
+candBurst_i = unique(candBurst_i);
 
 % for each candidate burst index, see how long it will take to get 200ms of
 % inactivity and mark that as a burst.

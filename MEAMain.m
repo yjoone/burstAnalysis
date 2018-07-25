@@ -28,7 +28,8 @@ dataStruct = preProcessData(dataStruct);
 [burstStruct] = detectBurst(dataStruct,postBurstTimeThresh,preBurstPeriod,'on');
 
 % analyze burst
-burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
+% burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
+burstStruct = analyzeBurst(burstStruct,minBurstActivity,'off');
 
 % get burst channels
 burstStruct = getBurstChannels(burstStruct);

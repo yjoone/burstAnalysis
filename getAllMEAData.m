@@ -1,23 +1,29 @@
-function runAllMEAData(filePath)
+function allData = getAllMEAData(filePath)
 
 if nargin < 1
     filePath = '/Users/JimKwon/Documents/WennerLab_MATLAB_Collaboration/MEA data/Data/BurstAnalysis';
 end
 
 d = dir(filePath);
-
+allData = NaN;
 for i = 3:length(d)
     if d(i).isdir
         dd = dir(fullfile(filePath,d(i).name));
         data = getDataFromDir(dd);
-        
+        if isstruct(allData)
+            allData = [allData, data];
+        else
+            allData = data;
+        end
     end
 end
 end
 
 function [data] = getDataFromDir(Dir)
 dd = Dir;
-data = {};
+data = struct;
+currLine = 1;
+
     for i = 3:length(dd)
         name = dd(i).name;
         
@@ -44,9 +50,10 @@ data = {};
                 if ~notData && strcmp(wsdir{j}(1:5),'dataS')
                     eval(['data_temp = ' wsdir{j} ';']);
                     dataDir = dd(i).folder;
-                    data{end+1,1}.data = data_temp;
-                    data{end+1,1}.fileName = 
-                    data{end+1,1}.dir = dataDir;
+                    data(currLine).data = data_temp;
+                    data(currLine).fileName = name;
+                    data(currLine).dir = dataDir;
+                    currLine = currLine+1;
                 end
             end
         end
@@ -60,9 +67,5 @@ data = {};
         data = NaN;
     end
     
-    % import the data
-    if ~isnan(data)
-        load(fullfile(dataDir,data));
-    end
    
 end
