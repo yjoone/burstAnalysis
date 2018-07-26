@@ -145,7 +145,6 @@ handles.output.UserData.rasterxlim = get(gca,'xlim');
 if handles.output.UserData.burstInfo 
     noise = burstStruct.noise;
     hold on
-    % burst_i = burstStruct.burst_ind(:,1);
     burst_i = burstStruct.burst_ind(~noise,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
@@ -155,20 +154,17 @@ if handles.output.UserData.burstInfo
     plot(burst_i,ones(1,burst_i_len),'r*','markersize',5)
     
     
-    
-    
-    % plot the end of bursts but identified as noise
-    % burst_f = burstStruct.burst_ind(:,2);    
+    % plot the end of burst with blue asterisk
+
     burst_f = burstStruct.burst_ind(~noise,2);
     
-    % the burst_f is in 10ms bins so scale it to 1s time scale
+    % the burst_i is in 10ms bins so scale it to 1s time scale
     burst_f = (burst_f/100);
     
-%     burst_i_dn = (burstStruct.burst_i_dn/100);
     burst_f_len = length(burst_f);
     plot(burst_f,ones(1,burst_f_len),'b*','markersize',5)
     
-%     
+    
 %     
 %     % plot the potential bursts but identified as noise
 %     noise = burstStruct.noise;
@@ -176,7 +172,7 @@ if handles.output.UserData.burstInfo
 % %     burst_i_dn = (burstStruct.burst_i_dn/100);
 %     burst_i_dn_len = length(burst_i_dn);
 %     plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
-%     
+    
     hold off
 end
 
