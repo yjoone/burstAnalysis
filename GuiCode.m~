@@ -159,7 +159,7 @@ if handles.output.UserData.burstInfo
     
     % plot the end of bursts but identified as noise
     % burst_f = burstStruct.burst_ind(:,2);    
-    burst_f = burstStruct.burst_ind(~noise,2);
+    burst
     
     % the burst_f is in 10ms bins so scale it to 1s time scale
     burst_f = (burst_f/100);
