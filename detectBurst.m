@@ -77,6 +77,8 @@ for i = 1:candBurst_len
             overlap = 1;
         end
     end
+    
+    addProgressInfo(candBurst_len,i)
 end
 
 burst_ind = bursts_sf(find(bursts_sf(:,1)),:);
