@@ -1,0 +1,78 @@
+function duration = getBurstDuration(bursts,ch)
+
+% This function takes in a single burst, and identifies beginning and
+% ending time for that burst.
+
+% Set the burst detection threshold: 100x overall firing rate % disregard.
+initialBurstDetectionWindow = .1; %s
+initialBurstSpikeCount = 10; %spikes
+initialBurstChannelCount = 4;
+finalBurstDetectionWindow = .1; %s
+finalBurstChannelCount = 5;
+burstEndThresh = 3;
+
+ts = bursts;
+duration = [];
+
+%% get the beginning channal count requirement
+chanCount_i = 0;
+spi = 1;
+
+while chanCount_i < initialBurstChannelCount
+    % get all the spikes within the window
+    b_ti = ts(spi);
+    chCur_i = find(ts > b_ti & ts < (b_ti + initialBurstDetectionWindow));
+    chanCount_i = length(unique(chCur_i));
+    if chanCount_i < initialBurstChannelCount
+        spi = spi+1;
+    end
+end
+        
+burstStart = spi;
+
+%% get the ending channal count requirement
+chanCount_f = 0;
+spf = 1;
+
+while chanCount_f < finalBurstChannelCount
+    b_tf 
+
+%% Eisenman method 2015 - burst beginning
+% [C,ia,ic] = unique(ch);
+rejectedBurst_i = [];
+burst_i = 1;
+
+for spi = 1:length(ts) % vectorize it later
+    spikes_temp_tf = (tms < (tms(spi)+100) & tms >= tms(spi));
+    spikeChan = ch(spikes_temp_tf);
+    usp = unique(spikeChan);
+    if length(usp) >= initialBurstChannelCount &...
+            sum(spikeChan) >= initialBurstSpikeCount % inital burst criteria
+        % now find the end point by adding single spikes to the burst
+        burstEndMark = 0;
+        burstEnd_tms_i = find(spikes_temp_tf == 1);
+        burstEnd_tms_add = 0;
+        while burstEndMark == 0
+            burstRange = min(burstEnd_tms_i):(max(burstEnd_tms_i)+burstEnd_tms_add);
+            
+            try 
+                bursts_temp = tms(burstRange);
+                % check for end point
+                burst_end = max(bursts_temp);
+                burstEndChan = find(bursts_temp >= burst_end-100);
+                if length(burstEndChan) < 5
+                    bursts{burst_i} = bursts_temp;
+                    burstEndMark = 1;
+                    burst_i = burst_i+1;
+                else
+                    burstEnd_tms_add = burstEnd_tms_add+1;
+                    rejectedBurst_i = [rejectedBurst_i; spi];
+                end
+            catch
+                rejectedBurst_i = [rejectedBurst_i; spi];
+                burstEndMark = 1;
+            end
+        end
+    end
+end
+end

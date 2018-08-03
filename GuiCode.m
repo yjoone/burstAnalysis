@@ -144,25 +144,28 @@ handles.output.UserData.rasterxlim = get(gca,'xlim');
 % plot the burst lcoations on the raster plot if burstStruct was the input
 if handles.output.UserData.burstInfo 
     noise = burstStruct.noise;
+    burststarti = burstStruct.burststarti;
+    burstendi = burstStruct.burstendi;
     hold on
-    burst_i = burstStruct.burst_ind(~noise,1);
+    
+    burststarti = burstStruct.burststarti(~noise,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
-    burst_i = (burst_i/100);
+    % burst_i = (burst_i/100);
     
-    burst_i_len = length(burst_i);
-    plot(burst_i,ones(1,burst_i_len),'r*','markersize',5)
+    burststarti_len = length(burststarti);
+    plot(burststarti,ones(1,burststarti_len),'r*','markersize',5)
     
     
     % plot the end of burst with blue asterisk
 
-    burst_f = burstStruct.burst_ind(~noise,2);
+    burstendi = burstStruct.burstendi(~noise,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
-    burst_f = (burst_f/100);
+    % burst_f = (burst_f/100);
     
-    burst_f_len = length(burst_f);
-    plot(burst_f,ones(1,burst_f_len),'b*','markersize',5)
+    burstendi_len = length(burstendi);
+    plot(burstendi,ones(1,burstendi_len),'b*','markersize',5)
     
     
 %     

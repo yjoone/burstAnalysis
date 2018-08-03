@@ -16,6 +16,7 @@ warning('off','stats:mle:EvalLimit')
 data = burstStruct.data;
 burst_ind = burstStruct.burst_ind;
 bursts = burstStruct.bursts;
+burstChans = burstStruct.burstChans;
 burst_ind_binSize = burstStruct.burst_ind_binSize;
 sc = burstStruct.data.snips.eNe1.sortcode;
 ch = burstStruct.data.snips.eNe1.chan;
@@ -32,11 +33,15 @@ duration = zeros(nBursts,1);
 for i = 1:nBursts
     burst_ind_temp = burst_ind(i,:);
     bursts_temp = bursts{i};
+    chans_temp = burstChans{i};
     if length(bursts{i}) < minBurstActivity % don't include small bursts
         noise(i,1) = 1;
     else % compute burst characteristics
-        % burst duration
-        duration(i,1) = (diff(burst_ind_temp))/(1000/burst_ind_binSize);
+        
+        %% compute burst duration with Eisenmann method
+%         % burst duration
+%         duration(i,1) = (diff(burst_ind_temp))/(1000/burst_ind_binSize);
+        [duration(i,1),start_i(i,1),end_i(i,1)] = getBurstDuration(bursts_temp,chans_temp);
         
         % calculate spike frequency within a burst
         % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
@@ -60,6 +65,8 @@ IBI = diff(burst_ind(~noise,1))/(1000/burst_ind_binSize);
 burstStruct.noise = noise;
 % burstStruct.bursts = bursts{~noise}; % not simple to get rid of cell indexes. This contains noise bursts 
 burstStruct.duration_s = duration;
+burstStruct.burststarti = start_i;
+burstStruct.burstendi = end_i;
 % burstStruct.burst_i_dn = burst_i(~noise);
 burstStruct.burstFreq_Hz = burstFreq_Hz;
 burstStruct.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz;
