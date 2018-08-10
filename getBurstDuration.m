@@ -6,13 +6,12 @@ function [duration,noise,start_i,end_i,doubleBurst] = getBurstDuration(bursts,ch
 % Set the burst detection threshold: 100x overall firing rate % disregard.
 initialBurstDetectionWindow = .1; %s
 initialBurstSpikeCount = 10; %spikes % used to identify double bursts
-initialBurstChannelCount = 4;
+initialBurstChannelCount = 6;
 finalBurstDetectionWindow = .1; %s
-finalBurstChannelCount = 3;
-burstEndThresh = 3;
+finalBurstChannelCount = 5;
+
 
 ts = bursts;
-duration = [];
 burstLen = length(ts);
 
 
