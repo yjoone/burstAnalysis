@@ -8,7 +8,7 @@ initialBurstDetectionWindow = .1; %s
 initialBurstSpikeCount = 10; %spikes % used to identify double bursts
 initialBurstChannelCount = 4;
 finalBurstDetectionWindow = .1; %s
-finalBurstChannelCount = 5;
+finalBurstChannelCount = 3;
 burstEndThresh = 3;
 
 ts = bursts;
