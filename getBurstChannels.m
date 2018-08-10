@@ -8,7 +8,7 @@ function burstStruct = getBurstChannels(burstStruct)
 % ch = burstStruct.data.snips.eNe1.chan;
 % sc = burstStruct.data.snips.eNe1.sortcode;
 % burst_ind = burstStruct.burst_ind; % this is in 10ms bin size. divide by 100 to get to seconds
-burstChans = burstStruct.burstChans;
+burstChans = burstStruct.bursts_chan_adj;
 noise = burstStruct.noise;
 dur = burstStruct.duration_s;
 

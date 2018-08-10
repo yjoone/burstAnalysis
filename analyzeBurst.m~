@@ -53,58 +53,42 @@ for i = 1:nBursts
         %% compute burst duration with Eisenmann method
 %         % burst duration
 %         duration(i,1) = (diff(burst_ind_temp))/(1000/burst_ind_binSize);
-
-        [duration_temp,noise_temp,start_i_temp,end_i_temp,doubleBurst] = ...
-            getBurstDuration(bursts_temp,chans_temp);
-        
+        [duration_temp,noise_temp,start_i_temp,end_i_temp,doubleBurst] = getBurstDuration(bursts_temp,chans_temp);
+        [duration,noise,start_i,end_i,doubleBurst]
         bursts_adj = [bursts_adj; {doubleBurst.firstBurst.ts}];
         bursts_chan_adj = [bursts_chan_adj; {doubleBurst.firstBurst.chan}];
-        noise = [noise; noise_temp];
+        noise = [noise; 0];
         duration = [duration; duration_temp];
         start_i = [start_i; start_i_temp];
         end_i = [end_i; end_i_temp];
         
         if isfield(doubleBurst,'ts')
-            [duration_temp,noise_temp,start_i_temp,end_i_temp,doubleBurst] = ...
-                getBurstDuration(doubleBurst.ts,doubleBurst.chan);
-            
-            bursts_adj = [bursts_adj; {doubleBurst.firstBurst.ts}];
-            bursts_chan_adj = [bursts_chan_adj; {doubleBurst.firstBurst.chan}];
-            noise = [noise; noise_temp];
+            [duration_temp,start_i_temp,end_i_temp,doubleBurst] = getBurstDuration(doubleBurst.ts,doubleBurst.chan);
             duration = [duration; duration_temp];
             start_i = [start_i; start_i_temp];
             end_i = [end_i; end_i_temp];
         else
             
         end
-%         % calculate spike frequency within a burst
-%         % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
-%         withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
-%         
-%         noise(i,1) = 0;
+        % calculate spike frequency within a burst
+        % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
+        withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
+        
+        noise(i,1) = 0;
     end
 end
-
-% calculate spike frequency within a burst
-% withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
-% withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
-withinBurstSpikeRate_Hz = cellfun('length',bursts_adj)./duration;
-
 
 % calculate burst frequency
 burstFreq_Hz = sum(noise==0)/range(data.snips.eNe1.ts);
 
 % calculate IBI
 % IBI = mean(diff(burst_i_dn))/100; % divide by 100 because burst_i is in 10ms bins.
-% IBI = diff(burst_ind(~noise,1))/(1000/burst_ind_binSize);
-IBI = diff(start_i(~noise));
+IBI = diff(burst_ind(~noise,1))/(1000/burst_ind_binSize);
 
 % load all the data to the output struct
 % burstStruct.pdfType = 'gamma';
 % burstStruct.pdfType = 'burr';
 % burstStruct.pdfFit = pdfFit;
-burstStruct.bursts_adj = bursts_adj;
-burstStruct.bursts_chan_adj = bursts_chan_adj;
 burstStruct.noise = noise;
 % burstStruct.bursts = bursts{~noise}; % not simple to get rid of cell indexes. This contains noise bursts 
 burstStruct.duration_s = duration;
@@ -113,11 +97,11 @@ burstStruct.burstendi = end_i;
 % burstStruct.burst_i_dn = burst_i(~noise);
 burstStruct.burstFreq_Hz = burstFreq_Hz;
 burstStruct.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz;
-% burstStruct.IBI = IBI;
+burstStruct.IBI = IBI;
 
 % load in all the finalized analysis data
 burstStruct.analysisData.duration_s = duration(find(noise==0));
-% burstStruct.analysisData.burst_ind = burst_ind(find(noise == 0),:);
+burstStruct.analysisData.burst_ind = burst_ind(find(noise == 0),:);
 burstStruct.analysisData.burstFreq_Hz = burstFreq_Hz;
 burstStruct.analysisData.IBI = IBI;
 burstStruct.analysisData.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz(find(noise==0));

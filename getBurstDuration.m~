@@ -1,11 +1,11 @@
-function [duration,noise,start_i,end_i,doubleBurst] = getBurstDuration(bursts,ch)
+function [duration,start_i,end_i] = getBurstDuration(bursts,ch)
 
 % This function takes in a single burst, and identifies beginning and
 % ending time for that burst.
 
 % Set the burst detection threshold: 100x overall firing rate % disregard.
 initialBurstDetectionWindow = .1; %s
-initialBurstSpikeCount = 10; %spikes % used to identify double bursts
+initialBurstSpikeCount = 10; %spikes
 initialBurstChannelCount = 4;
 finalBurstDetectionWindow = .1; %s
 finalBurstChannelCount = 5;
@@ -32,29 +32,24 @@ try
         end
     end
 catch 
-    
-    doubleBurst.firstBurst.ts = ts;
-    doubleBurst.firstBurst.chan = ch;
     duration = NaN;
     start_i = NaN;
     end_i = NaN;
-    noise = 1;
     return
 end
         
 burstStart = spi;
 
 %% get the ending channal count requirement
-chanCount_f = inf;
-% spf = 1;
-spf = spi+initialBurstSpikeCount;
+chanCount_f = 0;
+spf = 1;
 
 
-while chanCount_f > finalBurstChannelCount
-
-    if spf > length(ts)
-        spf = length(ts);
+while chanCount_f < finalBurstChannelCount
+    if (ts(spf)) > 4536
+        keyboard
     end
+    
     b_tf = ts(spf);
     % Cur_i = find(ts > (b_tf + finalBurstDetectionWindow) & ts < b_tf);
 %     if isempty(Cur_i)
@@ -67,12 +62,8 @@ while chanCount_f > finalBurstChannelCount
 %         end
 %     end
     Cur_i = find(ts < (b_tf + finalBurstDetectionWindow) & ts > b_tf);
-    [chanCount_f,~] = size(Cur_i);
-    if chanCount_f >= finalBurstChannelCount 
-        spf = spf+1;
-    end
+
     
-    % stop the process if it reaches the end of the burst    
     if spf > burstLen 
         spf = spf-1; % take out the added +1 in line 47
         break
@@ -80,25 +71,6 @@ while chanCount_f > finalBurstChannelCount
     
 end
 
-%% identify double burst so that the later burst can be analyzed
-% doubleBurst.ts = ts(spf:end);
-% doubleBurst.chan = ch(spf:end);
-% doubleBurst.firstBurst.ts = ts(1:spf);
-% doubleBurst.firstBurst.chan = ch(1:spf);
-% 
-% if length(doubleBurst) < initialBurstSpikeCount
-%     doubleBurst = NaN;
-% end
-
-doubleBurst.firstBurst.ts = ts(1:spf);
-doubleBurst.firstBurst.chan = ch(1:spf);
-
-if length(ts(spf:end)) >= initialBurstSpikeCount
-    doubleBurst.ts = ts(spf:end);
-    doubleBurst.chan = ch(spf:end);
-end
-
 duration = ts(spf) - ts(spi);
 start_i = ts(spi);
 end_i = ts(spf);
-noise = 0;
