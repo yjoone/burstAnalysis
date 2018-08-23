@@ -36,10 +36,7 @@ noise = [];
 start_i = [];
 end_i = [];
 
-box = [];
 for i = 1:nBursts
-    count = 1;
-
 %    burst_ind_temp = burst_ind(i,:);
     bursts_temp = bursts{i};
     chans_temp = burstChans{i};
@@ -67,9 +64,12 @@ for i = 1:nBursts
         start_i = [start_i; start_i_temp];
         end_i = [end_i; end_i_temp];
         
-        
-        
+        % test
         while isfield(doubleBurst,'ts')
+            
+         
+        % end test
+        if isfield(doubleBurst,'ts')
             [duration_temp,noise_temp,start_i_temp,end_i_temp,doubleBurst] = ...
                 getBurstDuration(doubleBurst.ts,doubleBurst.chan);
             
@@ -79,29 +79,9 @@ for i = 1:nBursts
             duration = [duration; duration_temp];
             start_i = [start_i; start_i_temp];
             end_i = [end_i; end_i_temp];
+        else
             
-             count = count+1;
-             
-             if count > 2
-                 box = [box; length(noise)];
-             end
         end
-         
-%         % end test
-%         if isfield(dbt,'ts')
-%             doubleBurst = dbt;
-%             [duration_temp,noise_temp,start_i_temp,end_i_temp,doubleBurst] = ...
-%                 getBurstDuration(doubleBurst.ts,doubleBurst.chan);
-%             
-%             bursts_adj = [bursts_adj; {doubleBurst.firstBurst.ts}];
-%             bursts_chan_adj = [bursts_chan_adj; {doubleBurst.firstBurst.chan}];
-%             noise = [noise; noise_temp];
-%             duration = [duration; duration_temp];
-%             start_i = [start_i; start_i_temp];
-%             end_i = [end_i; end_i_temp];
-%         else
-%             
-%         end
 %         % calculate spike frequency within a burst
 %         % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
 %         withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
@@ -153,7 +133,7 @@ burstStruct.analysisData.mean_burstFreq_Hz = mean(burstStruct.analysisData.burst
 burstStruct.analysisData.mean_IBI = mean(burstStruct.analysisData.IBI);
 burstStruct.analysisData.mean_withinBurstSpikeRate_Hz = mean(burstStruct.analysisData.withinBurstSpikeRate_Hz);
 
-burstStruct.box = box;
+
 
 % % remove selected sort codes and channels
 % sc_i = ismember(sc,sc_rmv);
