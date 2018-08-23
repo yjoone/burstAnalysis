@@ -29,11 +29,11 @@ function varargout = GuiCode(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @GuiCode_OpeningFcn, ...
-                   'gui_OutputFcn',  @GuiCode_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @GuiCode_OpeningFcn, ...
+    'gui_OutputFcn',  @GuiCode_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -63,6 +63,9 @@ if isfield(varargin{1},'data')
     data = burstStruct.data;
     handles.output.UserData.burstInfo = 1;
     handles.output.UserData.burstStruct = burstStruct;
+    
+    % if there is a manual burst struct, import that
+    if isfield
 else
     data = varargin{1};
     handles.output.UserData.burstInfo = 0;
@@ -144,7 +147,7 @@ handles.output.UserData.rasterxlim = get(gca,'xlim');
 
 
 % plot the burst lcoations on the raster plot if burstStruct was the input
-if handles.output.UserData.burstInfo 
+if handles.output.UserData.burstInfo
     noise = burstStruct.noise;
     burststarti = burstStruct.burststarti;
     burstendi = burstStruct.burstendi;
@@ -160,7 +163,7 @@ if handles.output.UserData.burstInfo
     
     
     % plot the end of burst with blue asterisk
-
+    
     burstendi = burstStruct.burstendi(~noise,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
@@ -170,13 +173,13 @@ if handles.output.UserData.burstInfo
     plot(burstendi,ones(1,burstendi_len),'b*','markersize',5)
     
     
-%     
-%     % plot the potential bursts but identified as noise
-%     noise = burstStruct.noise;
-%     burst_i_dn = burst_i(logical(noise));
-% %     burst_i_dn = (burstStruct.burst_i_dn/100);
-%     burst_i_dn_len = length(burst_i_dn);
-%     plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
+    %
+    %     % plot the potential bursts but identified as noise
+    %     noise = burstStruct.noise;
+    %     burst_i_dn = burst_i(logical(noise));
+    % %     burst_i_dn = (burstStruct.burst_i_dn/100);
+    %     burst_i_dn_len = length(burst_i_dn);
+    %     plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
     
     hold off
 end
@@ -206,7 +209,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function [ch_selected,sc_selected] = GuiCode_OutputFcn(hObject, eventdata, handles) 
+function [ch_selected,sc_selected] = GuiCode_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -307,7 +310,7 @@ end
 
 
 % remove None selected
-if ch_i_selected == 1 
+if ch_i_selected == 1
     ch_selected = NaN;
     handles.output.UserData.ch_selected = NaN;
 else
@@ -315,7 +318,7 @@ else
     handles.output.UserData.ch_selected = ch_selected;
 end
 
-if sc_i_selected == 1 
+if sc_i_selected == 1
     sc_selected = NaN;
     handles.output.UserData.sc_selected = NaN;
 else
@@ -347,7 +350,7 @@ for ch_i = 1:max_ch
     ch_skip = sum(ch_i == ch_selected);
     if ~ch_skip
         ind = find(data.snips.eNe1.chan == ch_i);
-%         singleCh = data.snips.eNe1.ts(ind);
+        %         singleCh = data.snips.eNe1.ts(ind);
         
         % skip the sortCode if selected to be removed
         sortCodes = unique(data.snips.eNe1.sortcode);
@@ -364,7 +367,7 @@ for ch_i = 1:max_ch
         
         roundSC = ceil(singleCh/binsize_s);
         % nSpikes(i,roundSC) = 1;
-
+        
         for j = 1:length(roundSC)
             t_i = roundSC(j);
             nSpikes(ch_i,t_i) = nSpikes(ch_i,t_i)+1;
@@ -485,7 +488,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 datatipH = datacursormode(handles.figure1);
 datatipInfo = getCursorInfo(datatipH);
 
-% get the bin size info 
+% get the bin size info
 binsize_s = str2num(get(handles.edit1,'String'));
 
 % This does not change the absolute value of time based on the bin size.
@@ -501,7 +504,7 @@ ch_i_selected = get(handles.listbox1,'Value');
 maxCh = handles.output.UserData.curData.maxCh;
 ch_b = ones(1,maxCh);
 
-if ch_i_selected ~= 1 
+if ch_i_selected ~= 1
     ch_selected = ch_i_selected - 1;
     ch_b(1,ch_selected) = 0;
     ch_ind = find(ch_b == 1);
@@ -563,19 +566,19 @@ function pushbutton6_Callback(hObject, eventdata, handles)
 
 if isfield(handles.output.UserData,'burstStruct') % this means the saving button is for editted bursts
     burstStruct = handles.output.UserData.burstStruct;
-fileName_c = inputdlg('What is the file name?');
-fileName = [fileName_c{1} '.mat'];
-save(fileName,'burstStruct')
+    fileName_c = inputdlg('What is the file name?');
+    fileName = [fileName_c{1} '.mat'];
+    save(fileName,'burstStruct')
 else
-
+    
     % Analysis button
     dataStruct = handles.output.UserData.data;
     dataStruct.ch_selected = handles.output.UserData.ch_selected;
     dataStruct.sc_selected = handles.output.UserData.sc_selected;
     dataStruct.denoise = 0;
-fileName_c = inputdlg('What is the file name?');
-fileName = [fileName_c{1} '.mat'];
-save(fileName,'dataStruct')
+    fileName_c = inputdlg('What is the file name?');
+    fileName = [fileName_c{1} '.mat'];
+    save(fileName,'dataStruct')
 end
 
 
@@ -603,6 +606,9 @@ function editBurstToggle_Callback(hObject, eventdata, handles)
 originalFigColor = [.94 .94 .94];
 editFigColor = 'red';
 burstStruct = handles.output.UserData.burstStruct;
+if ~isfield(burstStruct,'noise_manual')
+    burstStruct.noise_manual = burstStruct.noise;
+end
 
 % get the toggle value
 toggleTF = get(hObject,'value');
@@ -618,16 +624,20 @@ end
 if toggleTF
     [x,y,button] = ginput;
     % press enter to finish out
+    
+    xPos = x(end); % just get the last click of the user
+    burst_i = find(burstStruct.burststarti < xPos & burstStruct.burstendi > xPos);
+    burstStruct.noise_manual(burst_i) = 1;
 end
 
-xPos = x(end); % just get the last click of the user
-burst_i = find(burstStruct.burststarti < xPos & burstStruct.burstendi > xPos);
-burstStruct.noise(burst_i) = 1;
 
-% recompute the analysis 
+% recompute the analysis
 
 duration = burstStruct.duration_s;
-bursts_adj = burstStruct.burst
+bursts_adj = burstStruct.bursts_adj;
+ts = burstStruct.data.snips.eNe1.ts;
+noise = burstStruct.noise_manual;
+start_i = burstStruct.burststarti;
 
 % calculate spike frequency within a burst
 % withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
@@ -636,7 +646,7 @@ withinBurstSpikeRate_Hz = cellfun('length',bursts_adj)./duration;
 
 
 % calculate burst frequency
-burstFreq_Hz = sum(noise==0)/range(data.snips.eNe1.ts);
+burstFreq_Hz = sum(noise==0)/range(ts);
 
 % calculate IBI
 % IBI = mean(diff(burst_i_dn))/100; % divide by 100 because burst_i is in 10ms bins.
@@ -651,7 +661,10 @@ burstStruct.analysisData_manual.IBI = IBI;
 burstStruct.analysisData_manual.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz(find(noise==0));
 
 % calculate the average and add to the burstStruct
-burstStruct.analysisData_manual.mean_duration_s = mean(burstStruct.analysisData.duration_s);
-burstStruct.analysisData_manual.mean_burstFreq_Hz = mean(burstStruct.analysisData.burstFreq_Hz);
-burstStruct.analysisData_manual.mean_IBI = mean(burstStruct.analysisData.IBI);
-burstStruct.analysisData_manual.mean_withinBurstSpikeRate_Hz = mean(burstStruct.analysisData.withinBurstSpikeRate_Hz);
+burstStruct.analysisData_manual.mean_duration_s = mean(burstStruct.analysisData_manual.duration_s);
+burstStruct.analysisData_manual.mean_burstFreq_Hz = mean(burstStruct.analysisData_manual.burstFreq_Hz);
+burstStruct.analysisData_manual.mean_IBI = mean(burstStruct.analysisData_manual.IBI);
+burstStruct.analysisData_manual.mean_withinBurstSpikeRate_Hz = mean(burstStruct.analysisData_manual.withinBurstSpikeRate_Hz);
+
+% put it back to UserData
+handles.output.UserData.burstStruct = burstStruct;

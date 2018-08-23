@@ -63,6 +63,7 @@ if isfield(varargin{1},'data')
     data = burstStruct.data;
     handles.output.UserData.burstInfo = 1;
     handles.output.UserData.burstStruct = burstStruct;
+
 else
     data = varargin{1};
     handles.output.UserData.burstInfo = 0;
@@ -603,8 +604,8 @@ function editBurstToggle_Callback(hObject, eventdata, handles)
 originalFigColor = [.94 .94 .94];
 editFigColor = 'red';
 burstStruct = handles.output.UserData.burstStruct;
-if ~isfield(burstStruct,'noise_manual')
-    burstStruct.noise_manual = burstStruct.noise;
+if ~isfield(burstStruct,'noise_orig')
+    burstStruct.noise_orig = burstStruct.noise;
 end
 
 % get the toggle value
@@ -624,7 +625,7 @@ if toggleTF
     
     xPos = x(end); % just get the last click of the user
     burst_i = find(burstStruct.burststarti < xPos & burstStruct.burstendi > xPos);
-    burstStruct.noise_manual(burst_i) = 1;
+    burstStruct.noise(burst_i) = 1;
 end
 
 
@@ -633,7 +634,7 @@ end
 duration = burstStruct.duration_s;
 bursts_adj = burstStruct.bursts_adj;
 ts = burstStruct.data.snips.eNe1.ts;
-noise = burstStruct.noise_manual;
+noise = burstStruct.noise;
 start_i = burstStruct.burststarti;
 
 % calculate spike frequency within a burst
