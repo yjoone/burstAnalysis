@@ -25,18 +25,18 @@ dataStruct = preProcessData(dataStruct);
 
 % detect burst
 % [burst_i,burstStruct,candBurst_i_orig,burstThresh] = detectBurst(dataStruct,postBurstTimeThresh,'on');
-[burstStruct] = detectBurst(dataStruct,postBurstTimeThresh,preBurstPeriod,'off');
+[burstStruct] = detectBurst(dataStruct,postBurstTimeThresh,preBurstPeriod,'on');
 
 % analyze burst
-% burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
-burstStruct = analyzeBurst(burstStruct,minBurstActivity,'off');
+burstStruct = analyzeBurst(burstStruct,minBurstActivity,'on');
 
 % get burst channels
 burstStruct = getBurstChannels(burstStruct);
 
 % save data
 fPath = burstStruct.data.info.blockname;
-fullPath = ['E:/MEA_Analysis/' fPath];
+% fullPath = ['E:/MEA_Analysis/' fPath];
+fullPath = ['F:\Data\' fPath];
 try
     mkdir(fullPath)
     ffPath = [fullPath '/BurstStruct.mat'];

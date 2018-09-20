@@ -22,18 +22,18 @@ function varargout = GuiCode(varargin)
 
 % Edit the above text to modify the response to help GuiCode
 
-% Last Modified by GUIDE v2.5 18-Aug-2018 20:36:38
+% Last Modified by GUIDE v2.5 25-Jan-2018 10:25:25
 
 % Version 1.3 update: add in axes handle
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-    'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @GuiCode_OpeningFcn, ...
-    'gui_OutputFcn',  @GuiCode_OutputFcn, ...
-    'gui_LayoutFcn',  [] , ...
-    'gui_Callback',   []);
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @GuiCode_OpeningFcn, ...
+                   'gui_OutputFcn',  @GuiCode_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -62,12 +62,15 @@ if isfield(varargin{1},'data')
     burstStruct = varargin{1};
     data = burstStruct.data;
     handles.output.UserData.burstInfo = 1;
-    handles.output.UserData.burstStruct = burstStruct;
-
 else
     data = varargin{1};
     handles.output.UserData.burstInfo = 0;
 end
+
+% save the original directory
+cd_orig = cd;
+cd('F:\Data');
+
 
 % % old way of importing the data
 % % store the spike data
@@ -121,7 +124,6 @@ set(handles.checkbox1,'string','Manual Y Limit','fontsize',15)
 set(handles.pushbutton4,'string','Raster','fontsize',15)
 set(handles.pushbutton5,'string','Denoise','fontsize',15);
 set(handles.pushbutton6,'string','Save for Analysis','fontsize',15)
-set(handles.editBurstToggle,'string','Edit bursts','fontsize',15)
 
 % plot the raster plot in axes 1.
 max_ts = 0.1;
@@ -145,39 +147,36 @@ handles.output.UserData.rasterxlim = get(gca,'xlim');
 
 
 % plot the burst lcoations on the raster plot if burstStruct was the input
-if handles.output.UserData.burstInfo
+if handles.output.UserData.burstInfo 
     noise = burstStruct.noise;
-    burststarti = burstStruct.burststarti;
-    burstendi = burstStruct.burstendi;
     hold on
-    
-    burststarti = burstStruct.burststarti(~noise,1);
+    burst_i = burstStruct.burst_ind(~noise,1);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
-    % burst_i = (burst_i/100);
+    burst_i = (burst_i/100);
     
-    burststarti_len = length(burststarti);
-    plot(burststarti,ones(1,burststarti_len),'r*','markersize',5)
+    burst_i_len = length(burst_i);
+    plot(burst_i,ones(1,burst_i_len),'r*','markersize',5)
     
     
     % plot the end of burst with blue asterisk
-    
-    burstendi = burstStruct.burstendi(~noise,1);
+
+    burst_f = burstStruct.burst_ind(~noise,2);
     
     % the burst_i is in 10ms bins so scale it to 1s time scale
-    % burst_f = (burst_f/100);
+    burst_f = (burst_f/100);
     
-    burstendi_len = length(burstendi);
-    plot(burstendi,ones(1,burstendi_len),'b*','markersize',5)
+    burst_f_len = length(burst_f);
+    plot(burst_f,ones(1,burst_f_len),'b*','markersize',5)
     
     
-    %
-    %     % plot the potential bursts but identified as noise
-    %     noise = burstStruct.noise;
-    %     burst_i_dn = burst_i(logical(noise));
-    % %     burst_i_dn = (burstStruct.burst_i_dn/100);
-    %     burst_i_dn_len = length(burst_i_dn);
-    %     plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
+%     
+%     % plot the potential bursts but identified as noise
+%     noise = burstStruct.noise;
+%     burst_i_dn = burst_i(logical(noise));
+% %     burst_i_dn = (burstStruct.burst_i_dn/100);
+%     burst_i_dn_len = length(burst_i_dn);
+%     plot(burst_i_dn,ones(1,burst_i_dn_len),'b*','markersize',5)
     
     hold off
 end
@@ -207,7 +206,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function [ch_selected,sc_selected] = GuiCode_OutputFcn(hObject, eventdata, handles)
+function [ch_selected,sc_selected] = GuiCode_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -308,7 +307,7 @@ end
 
 
 % remove None selected
-if ch_i_selected == 1
+if ch_i_selected == 1 
     ch_selected = NaN;
     handles.output.UserData.ch_selected = NaN;
 else
@@ -316,7 +315,7 @@ else
     handles.output.UserData.ch_selected = ch_selected;
 end
 
-if sc_i_selected == 1
+if sc_i_selected == 1 
     sc_selected = NaN;
     handles.output.UserData.sc_selected = NaN;
 else
@@ -348,7 +347,7 @@ for ch_i = 1:max_ch
     ch_skip = sum(ch_i == ch_selected);
     if ~ch_skip
         ind = find(data.snips.eNe1.chan == ch_i);
-        %         singleCh = data.snips.eNe1.ts(ind);
+%         singleCh = data.snips.eNe1.ts(ind);
         
         % skip the sortCode if selected to be removed
         sortCodes = unique(data.snips.eNe1.sortcode);
@@ -365,7 +364,7 @@ for ch_i = 1:max_ch
         
         roundSC = ceil(singleCh/binsize_s);
         % nSpikes(i,roundSC) = 1;
-        
+
         for j = 1:length(roundSC)
             t_i = roundSC(j);
             nSpikes(ch_i,t_i) = nSpikes(ch_i,t_i)+1;
@@ -486,7 +485,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 datatipH = datacursormode(handles.figure1);
 datatipInfo = getCursorInfo(datatipH);
 
-% get the bin size info
+% get the bin size info 
 binsize_s = str2num(get(handles.edit1,'String'));
 
 % This does not change the absolute value of time based on the bin size.
@@ -502,7 +501,7 @@ ch_i_selected = get(handles.listbox1,'Value');
 maxCh = handles.output.UserData.curData.maxCh;
 ch_b = ones(1,maxCh);
 
-if ch_i_selected ~= 1
+if ch_i_selected ~= 1 
     ch_selected = ch_i_selected - 1;
     ch_b(1,ch_selected) = 0;
     ch_ind = find(ch_b == 1);
@@ -562,23 +561,16 @@ function pushbutton6_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if isfield(handles.output.UserData,'burstStruct') % this means the saving button is for editted bursts
-    burstStruct = handles.output.UserData.burstStruct;
-    fileName_c = inputdlg('What is the file name?');
-    fileName = [fileName_c{1} '.mat'];
-    save(fileName,'burstStruct')
-else
-    
-    % Analysis button
-    dataStruct = handles.output.UserData.data;
-    dataStruct.ch_selected = handles.output.UserData.ch_selected;
-    dataStruct.sc_selected = handles.output.UserData.sc_selected;
-    dataStruct.denoise = 0;
-    fileName_c = inputdlg('What is the file name?');
-    fileName = [fileName_c{1} '.mat'];
-    save(fileName,'dataStruct')
-end
 
+% Analysis button
+dataStruct = handles.output.UserData.data;
+dataStruct.ch_selected = handles.output.UserData.ch_selected;
+dataStruct.sc_selected = handles.output.UserData.sc_selected;
+dataStruct.denoise = 0;
+
+fileName_c = inputdlg('What is the file name?');
+fileName = [fileName_c{1} '.mat'];
+save(fileName,'dataStruct')
 
 
 % --- Executes on button press in pushbutton7.
@@ -591,78 +583,3 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % when clicked puts the raster plot into its original size
 set(handles.axes2,'xlim',handles.output.UserData.rasterxlim)
 
-
-% --- Executes on button press in editBurstToggle.
-function editBurstToggle_Callback(hObject, eventdata, handles)
-% hObject    handle to editBurstToggle (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of editBurstToggle
-
-% set the values for the background color
-originalFigColor = [.94 .94 .94];
-editFigColor = 'red';
-burstStruct = handles.output.UserData.burstStruct;
-if ~isfield(burstStruct,'noise_orig')
-    burstStruct.noise_orig = burstStruct.noise;
-end
-
-% get the toggle value
-toggleTF = get(hObject,'value');
-
-% set the background color
-if toggleTF
-    set(gcf,'color',editFigColor);
-else
-    set(gcf,'color',originalFigColor);
-end
-
-% This is where the burst rejection takes place
-if toggleTF
-    [x,y,button] = ginput;
-    % press enter to finish out
-    
-    xPos = x(end); % just get the last click of the user
-    burst_i = find(burstStruct.burststarti < xPos & burstStruct.burstendi > xPos);
-    burstStruct.noise(burst_i) = 1;
-end
-
-
-% recompute the analysis
-
-duration = burstStruct.duration_s;
-bursts_adj = burstStruct.bursts_adj;
-ts = burstStruct.data.snips.eNe1.ts;
-noise = burstStruct.noise;
-start_i = burstStruct.burststarti;
-
-% calculate spike frequency within a burst
-% withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/range(bursts_temp);
-% withinBurstSpikeRate_Hz(i,1) = length(bursts_temp)/duration(i,1);
-withinBurstSpikeRate_Hz = cellfun('length',bursts_adj)./duration;
-
-
-% calculate burst frequency
-burstFreq_Hz = sum(noise==0)/range(ts);
-
-% calculate IBI
-% IBI = mean(diff(burst_i_dn))/100; % divide by 100 because burst_i is in 10ms bins.
-% IBI = diff(burst_ind(~noise,1))/(1000/burst_ind_binSize);
-IBI = diff(start_i(~noise));
-
-% load in all the finalized analysis data
-burstStruct.analysisData_manual.duration_s = duration(find(noise==0));
-% burstStruct.analysisData.burst_ind = burst_ind(find(noise == 0),:);
-burstStruct.analysisData_manual.burstFreq_Hz = burstFreq_Hz;
-burstStruct.analysisData_manual.IBI = IBI;
-burstStruct.analysisData_manual.withinBurstSpikeRate_Hz = withinBurstSpikeRate_Hz(find(noise==0));
-
-% calculate the average and add to the burstStruct
-burstStruct.analysisData_manual.mean_duration_s = mean(burstStruct.analysisData_manual.duration_s);
-burstStruct.analysisData_manual.mean_burstFreq_Hz = mean(burstStruct.analysisData_manual.burstFreq_Hz);
-burstStruct.analysisData_manual.mean_IBI = mean(burstStruct.analysisData_manual.IBI);
-burstStruct.analysisData_manual.mean_withinBurstSpikeRate_Hz = mean(burstStruct.analysisData_manual.withinBurstSpikeRate_Hz);
-
-% put it back to UserData
-handles.output.UserData.burstStruct = burstStruct;
